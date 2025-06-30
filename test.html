@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>功能测试页面</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .test-result {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 3px;
+        }
+        .pass { background: #d4edda; color: #155724; }
+        .fail { background: #f8d7da; color: #721c24; }
+        .info { background: #d1ecf1; color: #0c5460; }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover { background: #0056b3; }
+        .metrics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .metric {
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 5px;
+            text-align: center;
+        }
+        .metric-value {
+            font-size: 2em;
+            font-weight: bold;
+            color: #007bff;
+        }
+        .metric-label {
+            color: #666;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <h1>🧪 落地页功能测试</h1>
+    
+    <div class="test-section">
+        <h2>基础功能测试</h2>
+        <button onclick="runBasicTests()">运行基础测试</button>
+        <div id="basic-results"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>性能指标</h2>
+        <button onclick="measurePerformance()">测量性能</button>
+        <div class="metrics" id="performance-metrics"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>机器人检测测试</h2>
+        <button onclick="testBotDetection()">测试机器人检测</button>
+        <div id="bot-results"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>分析工具测试</h2>
+        <button onclick="testAnalytics()">测试分析工具</button>
+        <div id="analytics-results"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>移动端兼容性</h2>
+        <button onclick="testMobileCompatibility()">测试移动端</button>
+        <div id="mobile-results"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>完整测试套件</h2>
+        <button onclick="runFullTestSuite()">运行完整测试</button>
+        <div id="full-results"></div>
+    </div>
+
+    <script>
+        // 基础功能测试
+        function runBasicTests() {
+            const results = document.getElementById('basic-results');
+            results.innerHTML = '<div class="test-result info">正在运行基础测试...</div>';
+            
+            const tests = [
+                {
+                    name: '页面标题检查',
+                    test: () => document.title.length > 0
+                },
+                {
+                    name: 'Meta 标签检查',
+                    test: () => document.querySelector('meta[name="robots"]') !== null
+                },
+                {
+                    name: 'CSS 加载检查',
+                    test: () => document.styleSheets.length > 0
+                },
+                {
+                    name: 'JavaScript 加载检查',
+                    test: () => typeof window.app !== 'undefined'
+                },
+                {
+                    name: '响应式设计检查',
+                    test: () => document.querySelector('meta[name="viewport"]') !== null
+                }
+            ];
+            
+            let html = '';
+            tests.forEach(test => {
+                const passed = test.test();
+                html += `<div class="test-result ${passed ? 'pass' : 'fail'}">
+                    ${passed ? '✅' : '❌'} ${test.name}
+                </div>`;
+            });
+            
+            results.innerHTML = html;
+        }
+        
+        // 性能测量
+        function measurePerformance() {
+            const metricsDiv = document.getElementById('performance-metrics');
+            
+            const metrics = {
+                'DOM 加载时间': Math.round(performance.timing.domContentLoadedEventEnd - performance.timing.navigationStart),
+                '页面完全加载': Math.round(performance.timing.loadEventEnd - performance.timing.navigationStart),
+                '首次绘制': performance.getEntriesByType('paint').find(entry => entry.name === 'first-paint')?.startTime || 0,
+                '资源数量': performance.getEntriesByType('resource').length
+            };
+            
+            let html = '';
+            Object.entries(metrics).forEach(([label, value]) => {
+                html += `<div class="metric">
+                    <div class="metric-value">${Math.round(value)}</div>
+                    <div class="metric-label">${label}${label.includes('时间') ? 'ms' : ''}</div>
+                </div>`;
+            });
+            
+            metricsDiv.innerHTML = html;
+        }
+        
+        // 机器人检测测试
+        function testBotDetection() {
+            const results = document.getElementById('bot-results');
+            results.innerHTML = '<div class="test-result info">正在测试机器人检测...</div>';
+            
+            setTimeout(() => {
+                const tests = [
+                    {
+                        name: '机器人检测功能存在',
+                        test: () => window.app && typeof window.app.detectBot === 'function'
+                    },
+                    {
+                        name: '用户代理检查',
+                        test: () => navigator.userAgent.length > 0
+                    },
+                    {
+                        name: '屏幕尺寸检查',
+                        test: () => screen.width > 0 && screen.height > 0
+                    },
+                    {
+                        name: '插件检查',
+                        test: () => navigator.plugins.length >= 0
+                    },
+                    {
+                        name: '语言检查',
+                        test: () => navigator.languages && navigator.languages.length > 0
+                    }
+                ];
+                
+                let html = '';
+                tests.forEach(test => {
+                    const passed = test.test();
+                    html += `<div class="test-result ${passed ? 'pass' : 'fail'}">
+                        ${passed ? '✅' : '❌'} ${test.name}
+                    </div>`;
+                });
+                
+                results.innerHTML = html;
+            }, 1000);
+        }
+        
+        // 分析工具测试
+        function testAnalytics() {
+            const results = document.getElementById('analytics-results');
+            results.innerHTML = '<div class="test-result info">正在测试分析工具...</div>';
+            
+            const tests = [
+                {
+                    name: '分析配置加载',
+                    test: () => typeof window.ANALYTICS_CONFIG !== 'undefined'
+                },
+                {
+                    name: '分析管理器存在',
+                    test: () => typeof window.AnalyticsManager !== 'undefined'
+                },
+                {
+                    name: 'Google Analytics 配置',
+                    test: () => window.ANALYTICS_CONFIG && window.ANALYTICS_CONFIG.googleAnalytics
+                },
+                {
+                    name: 'Facebook Pixel 配置',
+                    test: () => window.ANALYTICS_CONFIG && window.ANALYTICS_CONFIG.facebookPixel
+                }
+            ];
+            
+            let html = '';
+            tests.forEach(test => {
+                const passed = test.test();
+                html += `<div class="test-result ${passed ? 'pass' : 'fail'}">
+                    ${passed ? '✅' : '❌'} ${test.name}
+                </div>`;
+            });
+            
+            results.innerHTML = html;
+        }
+        
+        // 移动端兼容性测试
+        function testMobileCompatibility() {
+            const results = document.getElementById('mobile-results');
+            results.innerHTML = '<div class="test-result info">正在测试移动端兼容性...</div>';
+            
+            const tests = [
+                {
+                    name: 'Viewport Meta 标签',
+                    test: () => {
+                        const viewport = document.querySelector('meta[name="viewport"]');
+                        return viewport && viewport.content.includes('width=device-width');
+                    }
+                },
+                {
+                    name: '触摸事件支持',
+                    test: () => 'ontouchstart' in window || navigator.maxTouchPoints > 0
+                },
+                {
+                    name: '移动端 CSS 媒体查询',
+                    test: () => window.matchMedia('(max-width: 768px)').matches !== undefined
+                },
+                {
+                    name: 'PWA Manifest',
+                    test: () => document.querySelector('link[rel="manifest"]') !== null
+                },
+                {
+                    name: 'Service Worker 支持',
+                    test: () => 'serviceWorker' in navigator
+                }
+            ];
+            
+            let html = '';
+            tests.forEach(test => {
+                const passed = test.test();
+                html += `<div class="test-result ${passed ? 'pass' : 'fail'}">
+                    ${passed ? '✅' : '❌'} ${test.name}
+                </div>`;
+            });
+            
+            results.innerHTML = html;
+        }
+        
+        // 运行完整测试套件
+        function runFullTestSuite() {
+            const results = document.getElementById('full-results');
+            results.innerHTML = '<div class="test-result info">正在加载完整测试套件...</div>';
+            
+            // 加载测试套件脚本
+            const script = document.createElement('script');
+            script.src = '/test/test-suite.js';
+            script.onload = () => {
+                results.innerHTML = '<div class="test-result info">测试套件已加载，请查看控制台输出</div>';
+            };
+            script.onerror = () => {
+                results.innerHTML = '<div class="test-result fail">❌ 无法加载测试套件</div>';
+            };
+            document.head.appendChild(script);
+        }
+        
+        // 页面加载时自动运行基础测试
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                runBasicTests();
+                measurePerformance();
+            }, 1000);
+        });
+    </script>
+</body>
+</html>
